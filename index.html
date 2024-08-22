@@ -1458,6 +1458,129 @@
                 return 1;
             }
 
+            /**
+             * Ball bouncing animation
+             * It checks if the ball and stick colors match
+             * And changes the ball color
+             */
+            bounce() {
+
+                this.balltween.
+                    to('#ball', this.time / 2, {
+                        y: '+=250px', scaleY: 0.7, transformOrigin: "bottom", ease: Power2.easeIn,
+                        onComplete: () => {
+                            this.checkColor();
+                        }
+                    }).
+                    to('#ball', this.time / 2, {
+                        y: '-=250px', scaleY: 1.1, transformOrigin: "bottom", ease: Power2.easeOut,
+                        onStart: () => {
+                            while (this.prevColor == this.color) {
+                                if (window.CP.shouldStopExecution(2)) break;
+                                this.color = new Color().getRandomColor();
+                            } window.CP.exitedLoop(2);
+                            this.prevColor = this.color;
+                            TweenMax.to('#ball', 0.5, { backgroundColor: this.color });
+                            $('#ball').removeClass('red').
+                                removeClass('yellow').
+                                removeClass('purple').
+                                addClass(new Color().colorcodeToName(this.color));
+                        }
+                    });
+
+            }
+
+            checkColor() {
+
+                let ballPos = $('#ball').offset().left + $('#ball').width() / 2;
+                let stickWidth = $('.stick').width();
+                let score = this.score;
+
+                $('#sticks .stick').each(function () {
+                    if ($(this).offset().left < ballPos && $(this).offset().left > ballPos - stickWidth) {
+
+                        if (Color.getColorFromClass($(this)) == Color.getColorFromClass('#ball')) {
+                            // if matches increase the score
+                            score++;
+                            $('#score').text(score);
+                            TweenMax.fromTo('#score', 0.5, { scale: 1.5 }, { scale: 1, ease: Elastic.easeOut.config(1.5, 0.5) });
+                        } else {
+
+                            // you loose
+                            game.stop();
+
+                        }
+
+                    }
+                });
+
+                this.score = score;
+            }
+        }
+
+
+
+        class Stick {
+
+            constructor() {
+                this.stick = this.addStick();
+            }
+
+            addStick() {
+                this.stick = $('#sticks').append('<div class="stick inactive"></div>');
+                return this.stick;
+            }
+        }
+
+
+
+        class Color {
+
+            constructor() {
+                this.colors = ["#FF4571", "#FFD145", "#8260F6"];
+                this.effects = ["bubble", "triangle", "block"];
+                this.prevEffect = null;
+            }
+
+            getRandomColor() {
+                let colorIndex = Math.random() * 3;
+                let color = this.colors[Math.floor(colorIndex)];
+                return color;
+            }
+
+            colorcodeToName(color) {
+                let colors = ["#FF4571", "#FFD145", "#8260F6"];
+                let names = ["red", "yellow", "purple"];
+                let index = colors.indexOf(color);
+                if (index == -1) return false;
+                return names[index];
+            }
+
+            /**
+            * Changes the color of an element
+            * As we as adds verbal name of the color
+            */
+            changeColor(el) {
+                let index = el.data("index");
+                if (index === undefined) { index = 0; } else { index += 1; }
+                if (index == 3) index = 0;
+                el.
+                    css('background-color', this.colors[index]).
+                    data('index', index);
+
+                el.removeClass('red').
+                    removeClass('yellow').
+                    removeClass('purple').
+                    addClass(this.colorcodeToName(this.colors[index]));
+
+                if (el.hasClass('inactive')) {
+                    this.setEffect(el);
+                    el.addClass('no-effect');
+                }
+
+                el.removeClass('inactive');
+            }
+
     </script>
 </body>
 
