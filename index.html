@@ -1581,6 +1581,76 @@
                 el.removeClass('inactive');
             }
 
+            getRandomEffect() {
+                let effectIndex = null;
+
+                effectIndex = Math.floor(Math.random() * 3);
+                while (effectIndex == this.prevEffect) {
+                    if (window.CP.shouldStopExecution(3)) break;
+                    effectIndex = Math.floor(Math.random() * 3);
+                } window.CP.exitedLoop(3);
+
+                this.prevEffect = effectIndex;
+                return this.effects[effectIndex];
+            }
+
+            /**
+             * Adds the effect specific particles to the stick
+             */
+            setEffect(el) {
+                let effect = this.getRandomEffect();
+                el.addClass(effect + '-stick');
+                for (let i = 1; i <= 14; i++) {
+                    if (window.CP.shouldStopExecution(4)) break;
+                    if (effect == 'block') {
+                        el.append(`<div class="${effect} ${effect}-${i}"><div class="inner"></div><div class="inner inner-2"></div></div>`);
+                    } else {
+                        el.append(`<div class="${effect} ${effect}-${i}"></div>`);
+                    }
+                } window.CP.exitedLoop(4);
+            }
+
+            /**
+             * Since the ball and sticks have several classes
+             * This method searches for the color class
+             * @param el [DOM element]
+             * @return {string} class name
+             */
+            static getColorFromClass(el) {
+                let classes = $(el).attr('class').split(/\s+/);
+                for (var i = 0, len = classes.length; i < len; i++) {
+                    if (window.CP.shouldStopExecution(5)) break;
+                    if (classes[i] == 'red' || classes[i] == 'yellow' || classes[i] == 'purple') {
+                        return classes[i];
+                    }
+                } window.CP.exitedLoop(5);
+            }
+        }
+
+
+        class Animation {
+
+            /**
+             * Creates and positions the small glow elements on the screen
+             */
+            static generateSmallGlows(number) {
+                let h = $(window).height();
+                let w = $(window).width();
+                let scale = w > h ? h / 800 : w / 1200;
+
+                h = h / scale;
+                w = w / scale;
+
+                for (let i = 0; i < number; i++) {
+                    if (window.CP.shouldStopExecution(6)) break;
+                    let left = Math.floor(Math.random() * w);
+                    let top = Math.floor(Math.random() * (h / 2));
+                    let size = Math.floor(Math.random() * 8) + 4;
+                    $('.small-glows').prepend('<div class="small-glow"></div>');
+                    let noise = $('.small-glows .small-glow').first();
+                    noise.css({ left: left, top: top, height: size, width: size });
+                } window.CP.exitedLoop(6);
+            }
     </script>
 </body>
 
