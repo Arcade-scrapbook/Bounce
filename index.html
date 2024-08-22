@@ -1352,6 +1352,111 @@
 
             }
 
+            /**
+             * Calls the above function
+             * If the game is running it stops and shows the score
+             * If the game has stops it takes player to the main menu
+             */
+            scaleScreenAndRun() {
+
+                this.scaleScreen();
+
+                if (this.isRunning) {
+                    this.stop();
+                } else {
+                    this.intro();
+                }
+
+            }
+
+            /**
+            * This is the initial animation
+            * where the sticks come to the starting position
+            * and the ball appears and falls down
+            */
+            moveToStart() {
+
+                let tip = new TimelineMax({ delay: 2 });
+
+                tip.
+                    fromTo('.learn-to-play', 1, { scale: 0 }, { scale: 1, opacity: 1, ease: Elastic.easeOut.config(1.25, 0.5) }).
+                    to('.learn-to-play', 1, { scale: 0, opacity: 0, ease: Elastic.easeOut.config(1.25, 0.5) }, 3);
+
+                TweenMax.fromTo('#ball', this.time,
+                    {
+                        scale: 0
+                    },
+
+                    {
+                        scale: 1,
+                        delay: this.time * (this.steps - 3 - 1.5),
+                        onComplete: () => {
+                            this.balltween.play();
+                        }
+                    });
+
+
+                this.timeline.add(
+                    TweenMax.fromTo('#sticks', this.time * this.steps, { x: this.screen / this.scale }, { x: 0, ease: Power0.easeNone }));
+
+            }
+
+            /**
+            * The animation that moves sticks
+            */
+            moveScene() {
+
+                this.timeline.add(
+                    TweenMax.to('#sticks', this.time, { x: '-=180px', ease: Power0.easeNone, repeat: -1, onRepeat: () => { this.rearrange(); } }));
+
+
+            }
+
+            /**
+            * removes the first stick and adds one the the end
+            * this gives the sticks an infinite movement
+            */
+            rearrange() {
+
+                let scale = this.speedUp();
+
+                this.timeline.timeScale(scale);
+                this.balltween.timeScale(scale);
+
+                $('#sticks .stick').first().remove();
+                new Stick();
+
+            }
+
+            /**
+            * The game speeds up based on score
+            * The GSAP timeScale() function is called on the timeline to speed up the game
+            * This calculates how much shall the game speed up
+            */
+            speedUp() {
+                if (this.score > 30) {
+                    return 1.8;
+                }
+                if (this.score > 20) {
+                    return 1.7;
+                }
+                if (this.score > 15) {
+                    return 1.5;
+                } else
+                    if (this.score > 12) {
+                        return 1.4;
+                    } else
+                        if (this.score > 10) {
+                            return 1.3;
+                        } else
+                            if (this.score > 8) {
+                                return 1.2;
+                            } else
+                                if (this.score > 5) {
+                                    return 1.1;
+                                }
+                return 1;
+            }
 
     </script>
 </body>
