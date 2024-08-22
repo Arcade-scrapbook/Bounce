@@ -1370,10 +1370,10 @@
             }
 
             /**
-            * This is the initial animation
-            * where the sticks come to the starting position
-            * and the ball appears and falls down
-            */
+             * This is the initial animation
+             * where the sticks come to the starting position
+             * and the ball appears and falls down
+             */
             moveToStart() {
 
                 let tip = new TimelineMax({ delay: 2 });
@@ -1402,8 +1402,8 @@
             }
 
             /**
-            * The animation that moves sticks
-            */
+             * The animation that moves sticks
+             */
             moveScene() {
 
                 this.timeline.add(
@@ -1413,9 +1413,9 @@
             }
 
             /**
-            * removes the first stick and adds one the the end
-            * this gives the sticks an infinite movement
-            */
+             * removes the first stick and adds one the the end
+             * this gives the sticks an infinite movement
+             */
             rearrange() {
 
                 let scale = this.speedUp();
@@ -1429,10 +1429,10 @@
             }
 
             /**
-            * The game speeds up based on score
-            * The GSAP timeScale() function is called on the timeline to speed up the game
-            * This calculates how much shall the game speed up
-            */
+             * The game speeds up based on score
+             * The GSAP timeScale() function is called on the timeline to speed up the game
+             * This calculates how much shall the game speed up
+             */
             speedUp() {
                 if (this.score > 30) {
                     return 1.8;
@@ -1557,9 +1557,9 @@
             }
 
             /**
-            * Changes the color of an element
-            * As we as adds verbal name of the color
-            */
+             * Changes the color of an element
+             * As we as adds verbal name of the color
+             */
             changeColor(el) {
                 let index = el.data("index");
                 if (index === undefined) { index = 0; } else { index += 1; }
@@ -1751,17 +1751,32 @@
         });
 
         $(document).on('click', '.stick', function () {
-
             color.changeColor($(this));
             if ($(this).hasClass('no-effect')) {
-
                 if ($(this).hasClass('bubble-stick')) {
-
                     animation.playBubble($(this));
+                } else if ($(this).hasClass('triangle-stick')) {
+                    animation.playTriangle($(this));
+                } else if ($(this).hasClass('block-stick')) {
+                    animation.playBlock($(this));
                 }
+                $(this).removeClass('no-effect');
             }
-        }
+        });
 
+        $(document).on('click', '.section-2 .bar', function () {
+            color.changeColor($(this));
+        });
+
+        $(window).resize(function () {
+            if (!userAgent.match(/iPad/i) && !userAgent.match(/iPhone/i)) {
+                game.scaleScreenAndRun();
+            }
+        });
+
+        $(window).on("orientationchange", function () {
+            game.scaleScreenAndRun();
+        });
     </script>
 </body>
 
