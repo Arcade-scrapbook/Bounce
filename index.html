@@ -1256,6 +1256,103 @@
 
             }
 
+            /**
+            * Display score
+             */
+            showResult() {
+                let score = this.score;
+                $('.stop-game').css('display', 'flex');
+                $('.stop-game .final-score').text(score + '!');
+                $('.stop-game .result').text(this.showGrade(score));
+                $('.nominee').show();
+
+                let resultTimeline = new TimelineMax();
+                resultTimeline.
+                    fromTo('.stop-game .score-container', 0.7, { opacity: 0, scale: 0.3 }, { opacity: 1, scale: 1, ease: Elastic.easeOut.config(1.25, 0.5) }).
+                    fromTo('.stop-game .final-score', 2, { scale: 0.5 }, { scale: 1, ease: Elastic.easeOut.config(2, 0.5) }, 0).
+                    fromTo('.stop-game .result', 1, { scale: 0.5 }, { scale: 1, ease: Elastic.easeOut.config(1.5, 0.5) }, 0.3);
+
+
+            }
+
+            /**
+             * Takes players score and generates the cheering copy
+             * @param  {int} score
+             * @return {string} grade
+             */
+            showGrade(score) {
+                if (score > 30) return "Chuck Norris?"; else
+                    if (score > 25) return "You're da man"; else
+                        if (score > 20) return "Awesome"; else
+                            if (score > 15) return "Great!"; else
+                                if (score > 13) return "Nice!"; else
+                                    if (score > 10) return "Good Job!"; else
+                                        if (score > 5) return "Really?"; else
+                                            return "Poor...";
+            }
+
+            start() {
+
+                this.stop(); // stop the game
+
+                $('.start-game, .stop-game').css('display', 'none'); // hide all the popups
+                $('.nominee').hide();
+
+                new Game();
+                this.score = 0; // reset
+
+                this.isRunning = 1;
+
+                // Clean up the stick and ball holders
+                // and generate new ones
+                $('#sticks, .scene .ball-holder').html('');
+                $('#score').text(this.score);
+                this.generateSticks();
+                this.generateBall();
+
+                // disables scene animations for Phones
+                if (!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(window.navigator.userAgent)) {
+                    Animation.sceneAnimation();
+                }
+                this.moveToStart();
+                this.moveScene();
+
+                // reset timescale to normal as the game speeds up
+                this.timeline.timeScale(1);
+                this.balltween.timeScale(1);
+            }
+
+            stop() {
+
+                this.isRunning = 0;
+
+                $('.start-game, .stop-game').css('display', 'none');
+                $('#sticks, .scene .ball-holder, #score').html('');
+                TweenMax.killAll();
+
+                this.showResult();
+            }
+
+            scaleScreen() {
+
+                TweenMax.killAll(); // prevent multiple calls on resize
+
+                let height = $(window).height();
+                let width = $(window).width();
+
+                this.calculateScale();
+
+                $('.container').
+                    css('transform', 'scale(' + this.scale + ')').
+                    css('height', height / this.scale).
+                    css('width', width / this.scale).
+                    css('transformOrigin', 'left top');
+
+                $('#sticks').width(this.screen / this.scale + 3 * this.stickWidth / this.scale);
+
+            }
+
+
     </script>
 </body>
 
