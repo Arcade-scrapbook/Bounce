@@ -1651,6 +1651,70 @@
                     noise.css({ left: left, top: top, height: size, width: size });
                 } window.CP.exitedLoop(6);
             }
+
+            /**
+             * Creates the animations for sticks
+             * The effects is chosen by random
+             * And one of the three functions is
+             * Called accordingly
+             */
+            playBubble(el) {
+                let bubble = new TimelineMax();
+                bubble.staggerFromTo(el.find('.bubble'), 0.3, { scale: 0.1 }, { scale: 1 }, 0.03);
+                bubble.staggerTo(el.find('.bubble'), 0.5, { y: '-=60px', yoyo: true, repeat: -1 }, 0.03);
+            }
+
+            playTriangle(el) {
+                let triangle = new TimelineMax();
+                triangle.staggerFromTo(el.find('.triangle'), 0.3, { scale: 0.1 }, { scale: 1 }, 0.03).
+                    staggerTo(el.find('.triangle'), 1.5, {
+                        cycle: {
+                            rotationY: [0, 360],
+                            rotationX: [360, 0]
+                        },
+
+                        repeat: -1,
+                        repeatDelay: 0.1
+                    },
+                        0.1);
+            }
+
+            playBlock(el) {
+                let block = new TimelineMax();
+                let block2 = new TimelineMax({ delay: 0.69 });
+
+                block.staggerFromTo(el.find('.block'), 0.3, { scale: 0.1 }, { scale: 1 }, 0.03).
+                    staggerTo(el.find('.block .inner:not(.inner-2)'), 1, {
+                        cycle: {
+                            x: ["+200%", "-200%"]
+                        },
+
+                        repeat: -1,
+                        repeatDelay: 0.6
+                    },
+                        0.1);
+                block2.staggerTo(el.find('.block .inner-2'), 1, {
+                    cycle: {
+                        x: ["+200%", "-200%"]
+                    },
+
+                    repeat: -1,
+                    repeatDelay: 0.6
+                },
+                    0.1);
+            }
+
+            static sceneAnimation() {
+
+                const speed = 15; // uses it's local speed
+
+                // animates the small glows in a circular motion
+                $('.small-glow').each(function () {
+                    let speedDelta = Math.floor(Math.random() * 8);
+                    let radius = Math.floor(Math.random() * 20) + 20;
+                    TweenMax.to($(this), speed + speedDelta, { rotation: 360, transformOrigin: "-" + radius + "px -" + radius + "px", repeat: -1, ease: Power0.easeNone });
+                });
+
     </script>
 </body>
 
